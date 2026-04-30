@@ -1,0 +1,1 @@
+from app.forecast.forecast_service import ForecastService

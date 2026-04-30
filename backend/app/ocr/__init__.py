@@ -1,0 +1,1 @@
+from app.ocr.ocr_service import OCRService
