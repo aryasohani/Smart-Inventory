@@ -1,115 +1,146 @@
-# 🏪 SmartStore AI — Intelligent Inventory & Vendor Management Platform
+# 🏪 Smart Inventory — AI-Powered Inventory & Vendor Management
 
-> Production-grade FastAPI backend with real AI tool-calling, automated scheduling, OCR invoice parsing, and demand forecasting.
+A full-stack inventory management system with a **FastAPI backend** and **React frontend**, featuring real AI tool-calling, automated scheduling, OCR invoice parsing, and demand forecasting.
 
 ---
 
-## 🏗️ Architecture
+## 🗂️ Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        SmartStore AI Backend                        │
-│                                                                     │
-│  ┌──────────┐  ┌──
-────────┐  ┌──────────┐  ┌────────────────────┐ │
-│  │  /auth   │  │ /products│  │/suppliers│  │ /purchase-orders   │ │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────────┬───────────┘ │
-│       │              │              │                  │             │
-│  ┌────▼──────────────▼──────────────▼──────────────────▼──────────┐│
-│  │                     Services Layer                               ││
-│  │   AuthService  ProductService  SupplierService  POService       ││
-│  └────────────────────────────┬─────────────────────────────────── ┘│
-│                               │                                     │
-│  ┌────────────────────────────▼─────────────────────────────────── ┐│
-│  │              SQLAlchemy ORM + PostgreSQL                         ││
-│  │  users │ products │ inventory_logs │ suppliers │ purchase_orders ││
-│  │  purchase_order_items │ reports │ automation_logs               ││
-│  └──────────────────────────────────────────────────────────────── ┘│
-│                                                                     │
-│  ┌─────────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
-│  │   /ai/chat      │  │  /invoices   │  │  /products/{id}/       │ │
-│  │                 │  │   /parse     │  │   forecast             │ │
-│  │  LLM Provider   │  │              │  │                        │ │
-│  │  ┌───────────┐  │  │  OCR Engine  │  │  Demand Forecasting    │ │
-│  │  │Tool Calls │  │  │  Tesseract / │  │  Moving Average /      │ │
-│  │  │  ↕        │  │  │  Vision LLM  │  │  Exp. Smoothing        │ │
-│  │  │  DB Query │  │  │              │  │                        │ │
-│  │  └───────────┘  │  └──────────────┘  └────────────────────────┘ │
-│  └─────────────────┘                                                │
-│                                                                     │
-│  ┌──────────────────────────────────────────────────────────────── ┐│
-│  │                   APScheduler (Runs on startup)                  ││
-│  │  08:00 UTC → Daily Stock Alert + Auto Draft PO                  ││
-│  │  07:00 Mon → Weekly Inventory Report                            ││
-│  │  09:00 UTC → Daily Expiry Alert                                 ││
-│  └──────────────────────────────────────────────────────────────── ┘│
-└─────────────────────────────────────────────────────────────────────┘
+Smart-Inventory/
+├── backend/                        ← FastAPI + Python backend
+│   ├── app/
+│   │   ├── ai/                     ← AI chat with tool calling
+│   │   ├── automation/             ← APScheduler jobs
+│   │   ├── core/                   ← Config, security, logging
+│   │   ├── db/                     ← Async SQLAlchemy session
+│   │   ├── dependencies/           ← JWT auth guards
+│   │   ├── forecast/               ← Demand forecasting
+│   │   ├── models/                 ← ORM models
+│   │   ├── ocr/                    ← Invoice OCR parsing
+│   │   ├── repositories/           ← DB query layer
+│   │   ├── routers/                ← API route handlers
+│   │   ├── schemas/                ← Pydantic v2 schemas
+│   │   ├── services/               ← Business logic
+│   │   └── main.py                 ← FastAPI app entry point
+│   ├── alembic/                    ← DB migrations
+│   ├── .env.example                ← Environment variable template
+│   ├── requirements.txt
+│   └── alembic.ini
+│
+└── smartstore-ai-studio-main/      ← React + TypeScript frontend
+    ├── src/
+    │   ├── app/
+    │   │   ├── pages/              ← Dashboard, Products, Suppliers, POs, etc.
+    │   │   ├── features/ai/        ← AI Chat Dock
+    │   │   ├── layouts/            ← Sidebar, Topbar, AppLayout
+    │   │   └── auth/               ← Protected routes
+    │   ├── api/                    ← Axios API calls
+    │   ├── hooks/                  ← Custom React hooks
+    │   └── lib/                    ← Utilities
+    ├── .env.example
+    └── package.json
 ```
 
 ---
 
 ## 🧱 Tech Stack
 
+### Backend
 | Layer | Technology |
 |-------|-----------|
 | Framework | FastAPI + Python 3.11 |
 | Validation | Pydantic v2 |
 | ORM | SQLAlchemy 2.0 (async) |
-| Database | PostgreSQL 16 |
+| Database | PostgreSQL (Neon) |
 | Migrations | Alembic |
 | Auth | JWT (access + refresh) + bcrypt |
 | AI | OpenAI / Anthropic / Gemini (tool calling) |
 | OCR | Tesseract + pytesseract / Vision LLM |
 | Scheduler | APScheduler (AsyncIO) |
-| Containerization | Docker + Docker Compose |
+
+### Frontend
+| Layer | Technology |
+|-------|-----------|
+| Framework | React 19 + TypeScript |
+| Routing | TanStack Router |
+| State/Data | TanStack Query (React Query) |
+| UI Components | shadcn/ui + Radix UI |
+| Styling | Tailwind CSS v4 |
+| Charts | Recharts |
+| Animations | Framer Motion |
+| Forms | React Hook Form + Zod |
+| HTTP Client | Axios |
+| Build Tool | Vite |
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
-- An API key from OpenAI, Anthropic, or Google Gemini
+- Python 3.11+
+- Node.js 18+ or Bun
+- PostgreSQL database (Neon recommended)
+- API key from OpenAI, Anthropic, or Google Gemini
+- Tesseract OCR (for invoice parsing)
 
-### 1. Clone & Configure
+---
 
-```bash
-git clone <repo>
-cd smartstore-ai
-
-# Create .env from template
-cp .env.example .env
-
-# Edit .env with your settings (especially AI keys)
-nano .env
-```
-
-### 2. Start with Docker Compose
-
-```bash
-docker compose up --build
-```
-
-The API will be available at: **http://localhost:8000**
-Interactive docs: **http://localhost:8000/docs**
-
-### 3. Local Development (without Docker)
+### Backend Setup
 
 ```bash
 cd backend
+
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate       # Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Set up PostgreSQL locally, then update .env
+# Setup environment variables
+cp .env.example .env
+# Edit .env with your actual values
+
+# Run migrations
 alembic upgrade head
 
+# Start the server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+API available at: `http://localhost:8000`  
+Interactive docs: `http://localhost:8000/docs`
+
+---
+
+### Frontend Setup
+
+```bash
+cd smartstore-ai-studio-main
+
+# Install dependencies
+npm install
+# or
+bun install
+
+# Setup environment variables
+cp .env.example .env
+# Edit .env — set VITE_API_BASE_URL to your backend URL
+
+# Start dev server
+npm run dev
+# or
+bun dev
+```
+
+Frontend available at: `http://localhost:5173`
 
 ---
 
 ## 🔑 Environment Variables
+
+### Backend (`backend/.env`)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -120,310 +151,175 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 | `OPENAI_API_KEY` | ⚠️ | Required if `AI_PROVIDER=openai` |
 | `ANTHROPIC_API_KEY` | ⚠️ | Required if `AI_PROVIDER=anthropic` |
 | `GEMINI_API_KEY` | ⚠️ | Required if `AI_PROVIDER=gemini` |
-| `USE_VISION_LLM` | ❌ | Use OpenAI Vision for OCR (default: false = Tesseract) |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | ❌ | Default: 30 |
-| `REFRESH_TOKEN_EXPIRE_DAYS` | ❌ | Default: 7 |
+| `TESSERACT_CMD` | ❌ | Path to Tesseract executable |
+| `USE_VISION_LLM` | ❌ | Use Vision LLM for OCR (default: `false`) |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | ❌ | Default: `30` |
+| `REFRESH_TOKEN_EXPIRE_DAYS` | ❌ | Default: `7` |
+
+### Frontend (`smartstore-ai-studio-main/.env`)
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_API_BASE_URL` | ✅ | Backend API URL (e.g., `http://localhost:8000`) |
+
+---
+
+## 📋 Pages (Frontend)
+
+| Page | Route | Description |
+|------|-------|-------------|
+| Login | `/login` | JWT authentication |
+| Signup | `/signup` | New user registration |
+| Dashboard | `/` | Overview & stats |
+| Products | `/products` | Inventory catalog |
+| Product Detail | `/products/:id` | Stock, logs, forecast |
+| Suppliers | `/suppliers` | Vendor management |
+| Purchase Orders | `/purchase-orders` | PO lifecycle |
+| Invoice OCR | `/invoices` | Parse invoices via OCR |
+| Reports | `/reports` | Generated reports |
+| Automation | `/automation` | Scheduler job logs |
+| AI Chat | (floating dock) | AI assistant |
 
 ---
 
 ## 📋 API Reference
 
 ### Authentication
-
 ```
-POST /auth/register   → Create account
-POST /auth/login      → Get tokens
-POST /auth/refresh    → Rotate refresh token
-POST /auth/logout     → Revoke tokens
-GET  /auth/me         → Current user info
+POST /auth/register    → Create account
+POST /auth/login       → Get tokens
+POST /auth/refresh     → Rotate refresh token
+POST /auth/logout      → Revoke tokens
+GET  /auth/me          → Current user info
 ```
 
 ### Products & Inventory
-
 ```
-POST   /products/                          → Create product
-GET    /products/?page=1&category=X        → List (paginated + filtered)
-GET    /products/{id}                      → Get product detail
-PATCH  /products/{id}                      → Update product
-DELETE /products/{id}                      → Soft delete (admin only)
-POST   /products/{id}/adjust-stock         → Adjust stock with log entry
-GET    /products/{id}/inventory-logs       → Full change history
-GET    /products/{id}/forecast?days=7      → Demand forecast
+POST   /products/                      → Create product
+GET    /products/?page=1&category=X   → List (paginated + filtered)
+GET    /products/{id}                  → Product detail
+PATCH  /products/{id}                  → Update product
+DELETE /products/{id}                  → Soft delete (admin only)
+POST   /products/{id}/adjust-stock     → Adjust stock
+GET    /products/{id}/inventory-logs   → Stock change history
+GET    /products/{id}/forecast?days=7  → Demand forecast
 ```
 
 ### Suppliers
-
 ```
-POST   /suppliers/       → Create supplier (admin only)
-GET    /suppliers/       → List all active suppliers
-GET    /suppliers/{id}   → Supplier detail
-PATCH  /suppliers/{id}   → Update (admin only)
-DELETE /suppliers/{id}   → Soft delete (admin only)
+POST   /suppliers/      → Create supplier (admin only)
+GET    /suppliers/      → List all suppliers
+GET    /suppliers/{id}  → Supplier detail
+PATCH  /suppliers/{id}  → Update (admin only)
+DELETE /suppliers/{id}  → Soft delete (admin only)
 ```
 
 ### Purchase Orders
+```
+POST   /purchase-orders/               → Create draft PO
+GET    /purchase-orders/?status=draft  → List POs
+GET    /purchase-orders/{id}           → PO detail with items
+PATCH  /purchase-orders/{id}/status    → Transition status
+POST   /purchase-orders/{id}/send-email → Send to supplier
+```
 
-```
-POST   /purchase-orders/                  → Create draft PO
-GET    /purchase-orders/?status=draft     → List (filterable by status/supplier)
-GET    /purchase-orders/{id}              → PO detail with items
-PATCH  /purchase-orders/{id}/status       → Transition status
-POST   /purchase-orders/{id}/send-email   → Send to supplier (admin only)
-```
-
-**Status Flow:**
-```
-draft → sent → acknowledged → received
-  ↘         ↘              ↘
-   cancelled  cancelled     cancelled
-```
+**Status Flow:** `draft → sent → acknowledged → received` (or `cancelled`)
 
 ### AI Assistant
-
 ```
 POST /ai/chat
 Body: { "messages": [{ "role": "user", "content": "Which products are low on stock?" }] }
 ```
 
 ### Invoice OCR
-
 ```
 POST /invoices/parse
 Body: multipart/form-data with file (JPEG/PNG/PDF)
 ```
 
 ### Reports & Automation
-
 ```
 GET /reports/                → List generated reports (admin)
-GET /reports/automation-logs → View scheduler job history (admin)
+GET /reports/automation-logs → Scheduler job history (admin)
 ```
 
 ---
 
-## 🤖 AI Integration Deep Dive
+## 🤖 AI Integration
 
-The AI module uses **real function/tool calling** — not a chatbot with hardcoded responses.
+The AI module uses real **function/tool calling** — not a chatbot with hardcoded responses. Every answer is grounded in live database queries.
 
-### How It Works
-
-```
-User message
-     │
-     ▼
-  LLM API (GPT-4o / Claude / Gemini)
-     │
-     │ Decides which tool to call
-     ▼
-  ToolExecutor.execute(tool_name, args)
-     │
-     │ Runs SQL query against PostgreSQL
-     ▼
-  JSON result returned to LLM
-     │
-     │ LLM synthesizes natural language response
-     ▼
-  Final answer (grounded in real data)
-```
-
-### Available Tools
+### Available AI Tools
 
 | Tool | Description |
 |------|-------------|
-| `get_low_stock_products` | Fetches products below reorder threshold from DB |
+| `get_low_stock_products` | Fetches products below reorder threshold |
 | `get_product_detail` | Gets full product info by ID or SKU |
 | `get_po_history` | Retrieves purchase orders (filterable) |
 | `get_expiring_products` | Finds products expiring within N days |
 | `create_draft_po` | Creates a real draft PO in the database |
 
 ### Example Queries
-
-```
-"What products are critically low on stock?"
-"Show me the purchase order history for last month"
-"Which items expire in the next 7 days?"
-"Create a draft PO for supplier X with 50 units of Product Y"
-"Give me full details on product SKU-12345"
-```
-
-**Key principle**: The LLM never makes up inventory data. Every fact comes from a live DB query.
+- *"What products are critically low on stock?"*
+- *"Show me PO history for last month"*
+- *"Which items expire in the next 7 days?"*
+- *"Create a draft PO for supplier X with 50 units of Product Y"*
 
 ---
 
-## ⚙️ Automation Engine
+## ⚙️ Automation (Scheduled Jobs)
 
-Three scheduled jobs run automatically on server startup:
+Three jobs run automatically on server startup:
 
-### Job 1: Daily Stock Alert (08:00 UTC)
-- Queries all products below `reorder_threshold`
-- Groups them and creates a draft PO automatically
-- Logs results to `automation_logs` table
+| Job | Schedule | Description |
+|-----|----------|-------------|
+| Daily Stock Alert | 08:00 UTC daily | Checks low stock, auto-creates draft POs |
+| Weekly Report | Monday 07:00 UTC | Aggregates inventory metrics |
+| Daily Expiry Alert | 09:00 UTC daily | Finds products expiring within 14 days |
 
-### Job 2: Weekly Report (Monday 07:00 UTC)
-- Aggregates inventory metrics for the past 7 days
-- Saves structured report to `reports` table
-- Includes: active products, low stock count, PO values, expiry alerts
-
-### Job 3: Daily Expiry Alert (09:00 UTC)
-- Finds products expiring within 14 days
-- Generates recommended actions per product
-- Saves expiry report to `reports` table
-
-All jobs log: `job_name`, `timestamp`, `status`, `details` — queryable via `/reports/automation-logs`.
+All jobs are logged to the `automation_logs` table, queryable at `/reports/automation-logs`.
 
 ---
 
 ## 📊 Demand Forecasting
 
-```
-GET /products/{id}/forecast?days=7
-```
+`GET /products/{id}/forecast?days=7`
 
-**Method selection logic:**
-- `< 3` data points → Fallback (threshold-based estimate)
-- `3–7` data points → **Simple Moving Average** (window=3)
-- `> 7` data points → **Exponential Smoothing** (α=0.3)
-
-All forecasts are based on real `InventoryLog` sales entries — no random data.
+| Data Points | Method |
+|-------------|--------|
+| < 3 | Fallback (threshold-based estimate) |
+| 3–7 | Simple Moving Average (window=3) |
+| > 7 | Exponential Smoothing (α=0.3) |
 
 ---
 
 ## 🧾 OCR Invoice Parsing
 
-**Tesseract mode** (default):
-- Uses pytesseract for text extraction
-- Regex heuristics to extract: supplier, date, invoice#, line items, total
-- Returns `parse_confidence`: high / medium / low
+- **Tesseract mode** (default) — local OCR with regex heuristics
+- **Vision LLM mode** (`USE_VISION_LLM=true`) — GPT-4o Vision for higher accuracy
 
-**Vision LLM mode** (`USE_VISION_LLM=true`):
-- Sends image to GPT-4o Vision
-- Returns structured JSON with higher accuracy
-- Recommended for production
+Returns: supplier, date, invoice number, line items, total, and `parse_confidence`.
 
 ---
 
-## 🔐 Security Model
+## 🔐 Security
 
-- **JWT Access Token**: 30-minute expiry, signed with `SECRET_KEY`
-- **Refresh Token**: 7-day expiry, stored hashed in DB; rotation on every use
-- **bcrypt**: Password hashing with salt rounds
-- **Role-based access**:
-  - `admin`: Full access to all endpoints
-  - `staff`: Cannot create/edit suppliers, cannot send POs
+- JWT Access Token: 30-minute expiry
+- Refresh Token: 7-day expiry, stored hashed, rotated on every use
+- bcrypt password hashing
+- Role-based access: `admin` (full access) | `staff` (limited access)
 
 ---
 
 ## 🗄️ Database Schema
 
-```
-users              → Authentication & roles
-products           → Inventory catalog
-inventory_logs     → Every stock movement tracked
-suppliers          → Vendor registry
-purchase_orders    → PO lifecycle management
-purchase_order_items → PO line items
-reports            → Generated automation reports
-automation_logs    → Scheduler job execution history
-```
-
----
-
-## 📁 Project Structure
-
-```
-smartstore-ai/
-├── docker-compose.yml
-├── .env.example
-└── backend/
-    ├── Dockerfile
-    ├── alembic.ini
-    ├── requirements.txt
-    ├── alembic/
-    │   ├── env.py
-    │   ├── script.py.mako
-    │   └── versions/
-    │       └── 0001_initial.py
-    └── app/
-        ├── main.py              ← FastAPI app, lifespan, middleware
-        ├── core/
-        │   ├── config.py        ← Pydantic Settings
-        │   ├── security.py      ← JWT + bcrypt
-        │   ├── exceptions.py    ← Custom HTTP exceptions
-        │   └── logging.py       ← Structured logging
-        ├── db/
-        │   └── session.py       ← Async engine + session factory
-        ├── models/              ← SQLAlchemy ORM models
-        ├── schemas/             ← Pydantic v2 schemas
-        ├── dependencies/
-        │   └── auth.py          ← JWT guards / role checks
-        ├── services/            ← All business logic (no logic in routers)
-        │   ├── auth_service.py
-        │   ├── product_service.py
-        │   ├── supplier_service.py
-        │   └── purchase_order_service.py
-        ├── ai/
-        │   ├── tools.py         ← Tool schemas for LLM function calling
-        │   ├── tool_executor.py ← DB-grounded tool execution
-        │   └── chat_service.py  ← Multi-provider AI with agentic loop
-        ├── forecast/
-        │   └── forecast_service.py  ← MA + Exp. Smoothing forecasting
-        ├── ocr/
-        │   └── ocr_service.py   ← Tesseract + Vision LLM fallback
-        ├── automation/
-        │   ├── jobs.py          ← Async scheduled jobs
-        │   └── scheduler.py     ← APScheduler setup
-        └── routers/             ← Thin route handlers (no business logic)
-```
-
----
-
-## 🧪 Testing the API
-
-### 1. Register & Login
-
-```bash
-# Register admin
-curl -X POST http://localhost:8000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","full_name":"Admin","password":"secret123","role":"admin"}'
-
-# Login
-curl -X POST http://localhost:8000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"secret123"}'
-```
-
-### 2. Create a Product
-
-```bash
-curl -X POST http://localhost:8000/products/ \
-  -H "Authorization: Bearer <access_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Premium Coffee Beans",
-    "sku": "COFFEE-001",
-    "category": "Beverages",
-    "stock": 5,
-    "price": 24.99,
-    "reorder_threshold": 20
-  }'
-```
-
-### 3. Ask the AI
-
-```bash
-curl -X POST http://localhost:8000/ai/chat \
-  -H "Authorization: Bearer <access_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "messages": [
-      {"role": "user", "content": "Which products are running low on stock? Create a draft PO if needed."}
-    ]
-  }'
-```
-
----
-
-## 📜 License
-
-MIT — Use freely, build boldly.
+| Table | Description |
+|-------|-------------|
+| `users` | Authentication & roles |
+| `products` | Inventory catalog |
+| `inventory_logs` | Every stock movement |
+| `suppliers` | Vendor registry |
+| `purchase_orders` | PO lifecycle |
+| `purchase_order_items` | PO line items |
+| `reports` | Generated automation reports |
+| `automation_logs` | Scheduler job history |
