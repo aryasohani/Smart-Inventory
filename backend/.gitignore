@@ -36,3 +36,4 @@ Thumbs.db".env.example"
 env.py 
 __pycache__/ 
 *.pyc 
+env.py 
