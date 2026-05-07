@@ -10,8 +10,8 @@ export function LoginPage() {
   const { isAuthenticated, login } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation() as { state?: { from?: string; email?: string } };
-  const [email, setEmail] = useState(location.state?.email ?? "admin@smartstore.ai");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState(location.state?.email ?? "admin.e2e@smartstore.ai");
+  const [password, setPassword] = useState("StrongPass123");
   const [loading, setLoading] = useState(false);
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
@@ -33,7 +33,7 @@ export function LoginPage() {
 
   const quick = (e: string) => {
     setEmail(e);
-    setPassword("demo1234");
+    setPassword("StrongPass123");
   };
 
   return (
@@ -138,13 +138,13 @@ export function LoginPage() {
               <ShieldCheck className="size-3" /> Demo accounts
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => quick("admin@smartstore.ai")} className="text-left rounded-lg border border-border p-2.5 hover:border-primary/40 transition-colors">
-                <div className="text-xs font-semibold">Admin</div>
-                <div className="text-[10px] text-muted-foreground truncate">admin@smartstore.ai</div>
+              <button onClick={() => quick("admin.e2e@smartstore.ai")} className="text-left rounded-lg border border-border p-2.5 hover:border-primary/40 transition-colors">
+                <div className="text-xs font-semibold">Admin (E2E)</div>
+                <div className="text-[10px] text-muted-foreground truncate">admin.e2e@smartstore.ai</div>
               </button>
-              <button onClick={() => quick("staff@smartstore.ai")} className="text-left rounded-lg border border-border p-2.5 hover:border-primary/40 transition-colors">
-                <div className="text-xs font-semibold">Staff</div>
-                <div className="text-[10px] text-muted-foreground truncate">staff@smartstore.ai</div>
+              <button onClick={() => quick("staff.e2e@smartstore.ai")} className="text-left rounded-lg border border-border p-2.5 hover:border-primary/40 transition-colors">
+                <div className="text-xs font-semibold">Staff (E2E)</div>
+                <div className="text-[10px] text-muted-foreground truncate">staff.e2e@smartstore.ai</div>
               </button>
             </div>
           </div>

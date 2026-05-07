@@ -4,7 +4,7 @@ from pathlib import Path
 import httpx
 from PIL import Image
 
-BASE = "http://127.0.0.1:8000"
+BASE = "http://127.0.0.1:8001"
 
 
 def ensure(cond: bool, message: str):

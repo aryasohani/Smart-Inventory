@@ -8,10 +8,12 @@ class Settings(BaseSettings):
     APP_NAME: str = "SmartStore AI"
     APP_ENV: str = "development"
     LOG_LEVEL: str = "INFO"
-    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+    # CORS (loaded from .env as comma-separated string)
+    CORS_ORIGINS: str
 
     # Database
-    DATABASE_URL: str   # ✅ ONLY this (no value)
+    DATABASE_URL: str
     SYNC_DATABASE_URL: str = "sqlite:///./smartstore.db"
 
     # Security
@@ -45,4 +47,14 @@ settings = get_settings()
 
 
 def get_cors_origins() -> List[str]:
-    return [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+    """
+    Convert comma-separated env string into clean list
+    """
+    if not settings.CORS_ORIGINS:
+        return []
+
+    return [
+        origin.strip()
+        for origin in settings.CORS_ORIGINS.split(",")
+        if origin.strip()
+    ]

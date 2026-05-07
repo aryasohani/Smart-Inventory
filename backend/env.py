@@ -1,9 +1,10 @@
 from app.db.session import Base
+
 target_metadata = Base.metadata
 APP_NAME=SmartStore AI
 DEBUG=True
 
-DATABASE_URL=postgresql+psycopg2://neondb_owner:npg_t3FShMa8omAH@ep-empty-dust-ane6pyt0-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
+#DATABASE_URL=postgresql+psycopg2://neondb_owner:npg_t3FShMa8omAH@ep-empty-dust-ane6pyt0-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require
 
 SECRET_KEY=supersecretkey
 ALGORITHM=HS256
