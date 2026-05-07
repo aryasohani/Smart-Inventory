@@ -30,3 +30,9 @@ logs/
 # OS
 .DS_Store
 Thumbs.db".env.example" 
+.env 
+.env.example 
+*.db 
+env.py 
+__pycache__/ 
+*.pyc 
